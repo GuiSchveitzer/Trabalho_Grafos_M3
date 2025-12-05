@@ -223,8 +223,11 @@ class AlgoritmoGeneticoPCV:
         
         if len(nova_rota) > 1:
             # Escolher dois pontos
-            i, j = sorted(random.sample(range(len(nova_rota)), 2))
+            i, j = sorted(random.sample(range(len(nova_rota)), 2)) # Ex: i=2, j=5
             # Inverter segmento
+            #Ex:
+            # Antes: [N, C, | L, K, E, H |, G]
+            # Depois: [N, C, | H, E, K, L |, G]
             nova_rota[i:j+1] = reversed(nova_rota[i:j+1])
         
         return nova_rota

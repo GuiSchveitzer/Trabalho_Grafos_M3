@@ -1,0 +1,24 @@
+cruzamento_pmx
+# EXTRAIR SEGMENTOS
+    # segmento1 = filho1[2:6] = [L, K, E, H]
+    # segmento2 = filho2[2:6] = [K, L, N, E]
+    
+    # TROCAR SEGMENTOS
+    # filho1[2:6] = [K, L, N, E]
+    # filho1 = [N, C, K, L, N, E, G]  TEM N REPETIDO!
+    # filho2[2:6] = [L, K, E, H]
+    # filho2 = [G, H, L, K, E, H, C]  TEM H REPETIDO!
+    
+    # CORRIGIR CONFLITOS NO FILHO1
+    # Posição 0: N está em segmento2? SIM
+    # Onde N estava no pai2? Posição 4
+    # O que tem no pai1 na posição 4? E
+    # E está em segmento2? SIM
+    # Onde E estava no pai2? Posição 5
+    # O que tem no pai1 na posição 5? H
+    # H está em segmento2? NÃO
+    # filho1[0] = H
+    
+    # Resultado final:
+    # filho1 = [H, C, K, L, N, E, G]  SEM REPETIÇÕES
+    # filho2 = [G, C, L, K, E, H, N]  SEM REPETIÇÕES

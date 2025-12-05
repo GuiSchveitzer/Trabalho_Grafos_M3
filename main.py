@@ -114,12 +114,8 @@ class GraphApp:
     def atualizar_combos_cidades(self):
         """Atualiza os comboboxes de cidades"""
         nomes_vertices = [self.grafo.obter_nome_vertice(v) for v in self.grafo.obter_todos_vertices()]
-        self.cidade_inicial['values'] = nomes_vertices
-        self.cidade_destino['values'] = nomes_vertices
         self.cidade_inicial_ag['values'] = nomes_vertices
         if nomes_vertices:
-            self.cidade_inicial.current(0)
-            self.cidade_destino.current(min(1, len(nomes_vertices)-1))
             self.cidade_inicial_ag.current(0)
     
     def criar_grafo_personalizado(self):
@@ -217,14 +213,10 @@ Exemplo:
                 # Atualizar informações do grafo
                 self.atualizar_info_grafo()
                 
-                # Atualizar combos do A*
+                # Atualizar combos
                 nomes_vertices = [self.grafo.obter_nome_vertice(v) for v in self.grafo.obter_todos_vertices()]
-                self.cidade_inicial['values'] = nomes_vertices
-                self.cidade_destino['values'] = nomes_vertices
                 self.cidade_inicial_ag['values'] = nomes_vertices
                 if nomes_vertices:
-                    self.cidade_inicial.current(0)
-                    self.cidade_destino.current(min(1, len(nomes_vertices)-1))
                     self.cidade_inicial_ag.current(0)
                 
                 # Mostrar grafo
@@ -282,9 +274,6 @@ Exemplo:
         ttk.Button(frame_algoritmos, text="Verificar Planaridade", 
                   command=self.verificar_planaridade).pack(fill=tk.X, pady=2)
         
-        ttk.Button(frame_algoritmos, text="Coloração (Welsh-Powell)", 
-                  command=self.aplicar_welsh_powell).pack(fill=tk.X, pady=2)
-        
         ttk.Separator(frame_algoritmos, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
         
         # ========================================================================
@@ -321,8 +310,8 @@ Exemplo:
         frame_mut = ttk.Frame(frame_algoritmos)
         frame_mut.pack(fill=tk.X, pady=2)
         ttk.Label(frame_mut, text="Taxa Mutação:").pack(side=tk.LEFT)
-        self.taxa_mutacao = tk.DoubleVar(value=0.01)
-        spin_mut = ttk.Spinbox(frame_mut, from_=0.005, to=0.02, increment=0.001, 
+        self.taxa_mutacao = tk.DoubleVar(value=0.005)
+        spin_mut = ttk.Spinbox(frame_mut, from_=0.005, to=0.01, increment=0.001, 
                                textvariable=self.taxa_mutacao, width=10)
         spin_mut.pack(side=tk.RIGHT)
         
@@ -331,35 +320,21 @@ Exemplo:
         frame_ger.pack(fill=tk.X, pady=2)
         ttk.Label(frame_ger, text="Gerações:").pack(side=tk.LEFT)
         self.num_geracoes = tk.IntVar(value=20)
-        spin_ger = ttk.Spinbox(frame_ger, from_=20, to=200, increment=10, 
+        spin_ger = ttk.Spinbox(frame_ger, from_=20, to=99999, increment=10, 
                                textvariable=self.num_geracoes, width=10)
         spin_ger.pack(side=tk.RIGHT)
         
+        # Intervalo de geração
+        frame_int = ttk.Frame(frame_algoritmos)
+        frame_int.pack(fill=tk.X, pady=2)
+        ttk.Label(frame_int, text="Intervalo Geração:").pack(side=tk.LEFT)
+        self.intervalo_geracao = tk.DoubleVar(value=0.5)
+        spin_int = ttk.Spinbox(frame_int, from_=0.1, to=1.0, increment=0.1, 
+                               textvariable=self.intervalo_geracao, width=10)
+        spin_int.pack(side=tk.RIGHT)
+        
         ttk.Button(frame_algoritmos, text="Executar AG para PCV", 
                   command=self.executar_algoritmo_genetico).pack(fill=tk.X, pady=2)
-        
-        ttk.Separator(frame_algoritmos, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
-        
-        # A* - Seleção de cidades
-        ttk.Label(frame_algoritmos, text="Algoritmo A*", 
-                 font=('Arial', 10, 'bold')).pack(anchor=tk.W, pady=(5, 2))
-        
-        # Cidade origem
-        ttk.Label(frame_algoritmos, text="Origem:").pack(anchor=tk.W)
-        self.cidade_inicial = ttk.Combobox(frame_algoritmos, state='readonly')
-        self.cidade_inicial['values'] = list(COORDENADAS_CIDADES.keys())
-        self.cidade_inicial.current(0)
-        self.cidade_inicial.pack(fill=tk.X, pady=2)
-        
-        # Cidade destino
-        ttk.Label(frame_algoritmos, text="Destino:").pack(anchor=tk.W)
-        self.cidade_destino = ttk.Combobox(frame_algoritmos, state='readonly')
-        self.cidade_destino['values'] = list(COORDENADAS_CIDADES.keys())
-        self.cidade_destino.current(6)  # Guarapuava como padrão
-        self.cidade_destino.pack(fill=tk.X, pady=2)
-        
-        ttk.Button(frame_algoritmos, text="Encontrar Caminho Mínimo (A*)", 
-                  command=self.aplicar_a_estrela).pack(fill=tk.X, pady=2)
         
         ttk.Separator(frame_algoritmos, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=5)
         
@@ -747,6 +722,7 @@ Exemplo:
         taxa_cruz = self.taxa_cruzamento.get()
         taxa_mut = self.taxa_mutacao.get()
         num_ger = self.num_geracoes.get()
+        intervalo_ger = self.intervalo_geracao.get()
         
         # Criar instância do AG
         ag = AlgoritmoGeneticoPCV(
@@ -757,7 +733,7 @@ Exemplo:
             taxa_mutacao=taxa_mut,
             ponto1_cruzamento=2,
             ponto2_cruzamento=5,
-            intervalo_geracao=0.5
+            intervalo_geracao=intervalo_ger
         )
         
         # Mostrar janela de visualização

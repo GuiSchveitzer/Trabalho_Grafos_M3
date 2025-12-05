@@ -3,14 +3,14 @@
 # ============================================================================
 # Coordenadas das cidades do grafo fornecido (posições aproximadas para visualização)
 COORDENADAS_CIDADES = {
-    'F': (0, 2),      # Canto inferior esquerdo
-    'N': (2, 4),      # Superior esquerdo
-    'C': (2.5, 2.5),  # Centro-esquerdo
-    'L': (2, 0),      # Inferior centro-esquerdo
-    'K': (4, 4),      # Superior centro
-    'E': (5, 2.5),    # Centro-direita
-    'H': (4, 0),      # Inferior centro-direita
-    'G': (7, 3),      # Superior direito
+    'F': (3, 0),      # Centro, inferior
+    'L': (2.3, 1.7),  # Esquerda, baixo-meio
+    'N': (5, 1.3),  # Direita, baixo-meio
+    'C': (3.3, 2.1),    # Centro, meio
+    'H': (2.3, 3.3),      # Esquerda, meio-alto
+    'E': (3.5, 3.5),  # Centro-direita, meio-alto
+    'K': (5, 2.6),    # Direita, meio-alto
+    'G': (4.8, 4.4),      # Centro-direita, topo
 }
 
 # Arestas do grafo (cidade1, cidade2, peso/distância)
@@ -20,6 +20,7 @@ ARESTAS = [
     ('F', 'N', 30),
     ('F', 'C', 20),
     ('F', 'L', 10),
+    ('F', 'G', 55),
     
     # Arestas conectadas a N
     ('N', 'K', 60),
@@ -29,11 +30,12 @@ ARESTAS = [
     ('K', 'G', 90),
     ('K', 'E', 10),
     ('K', 'C', 70),
+    ('K', 'H', 73),
     
     # Arestas conectadas a C
     ('C', 'L', 10),
     ('C', 'E', 10),  # Aresta tracejada na imagem
-    ('C', 'K', 30),  # Duplicada, mas mantemos
+    ('C', 'H', 30),
     
     # Arestas conectadas a E
     ('E', 'G', 40),
@@ -46,11 +48,6 @@ ARESTAS = [
     # Arestas conectadas a H
     ('H', 'G', 80),
     
-    # Aresta inferior (F-H)
-    ('F', 'H', 55),
-    
-    # Aresta K-H (no diagrama existe essa conexão)
-    ('K', 'H', 73),
 ]
 
 
