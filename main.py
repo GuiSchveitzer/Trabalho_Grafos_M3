@@ -294,43 +294,44 @@ Exemplo:
         frame_pop.pack(fill=tk.X, pady=2)
         ttk.Label(frame_pop, text="População:").pack(side=tk.LEFT)
         self.tamanho_populacao = tk.IntVar(value=100)
-        spin_pop = ttk.Spinbox(frame_pop, from_=100, to=500, textvariable=self.tamanho_populacao, width=10)
+        spin_pop = ttk.Spinbox(frame_pop, from_=100, to=500, increment=10,
+                       textvariable=self.tamanho_populacao, width=10)
         spin_pop.pack(side=tk.RIGHT)
-        
+
         # Taxa de cruzamento
         frame_cruz = ttk.Frame(frame_algoritmos)
         frame_cruz.pack(fill=tk.X, pady=2)
         ttk.Label(frame_cruz, text="Taxa Cruzamento:").pack(side=tk.LEFT)
         self.taxa_cruzamento = tk.DoubleVar(value=0.7)
-        spin_cruz = ttk.Spinbox(frame_cruz, from_=0.6, to=0.8, increment=0.05, 
-                                textvariable=self.taxa_cruzamento, width=10)
+        spin_cruz = ttk.Spinbox(frame_cruz, from_=0.6, to=0.8, increment=0.01, 
+                        textvariable=self.taxa_cruzamento, width=10, format="%.2f")
         spin_cruz.pack(side=tk.RIGHT)
-        
+
         # Taxa de mutação
         frame_mut = ttk.Frame(frame_algoritmos)
         frame_mut.pack(fill=tk.X, pady=2)
         ttk.Label(frame_mut, text="Taxa Mutação:").pack(side=tk.LEFT)
-        self.taxa_mutacao = tk.DoubleVar(value=0.005)
+        self.taxa_mutacao = tk.DoubleVar(value=0.01)
         spin_mut = ttk.Spinbox(frame_mut, from_=0.005, to=0.01, increment=0.001, 
-                               textvariable=self.taxa_mutacao, width=10)
+                       textvariable=self.taxa_mutacao, width=10, format="%.3f")
         spin_mut.pack(side=tk.RIGHT)
-        
+
         # Número de gerações
         frame_ger = ttk.Frame(frame_algoritmos)
         frame_ger.pack(fill=tk.X, pady=2)
         ttk.Label(frame_ger, text="Gerações:").pack(side=tk.LEFT)
         self.num_geracoes = tk.IntVar(value=20)
-        spin_ger = ttk.Spinbox(frame_ger, from_=20, to=99999, increment=10, 
-                               textvariable=self.num_geracoes, width=10)
+        spin_ger = ttk.Spinbox(frame_ger, from_=20, to=200, increment=10, 
+                       textvariable=self.num_geracoes, width=10)
         spin_ger.pack(side=tk.RIGHT)
-        
+
         # Intervalo de geração
         frame_int = ttk.Frame(frame_algoritmos)
         frame_int.pack(fill=tk.X, pady=2)
         ttk.Label(frame_int, text="Intervalo Geração:").pack(side=tk.LEFT)
         self.intervalo_geracao = tk.DoubleVar(value=0.5)
         spin_int = ttk.Spinbox(frame_int, from_=0.1, to=1.0, increment=0.1, 
-                               textvariable=self.intervalo_geracao, width=10)
+                       textvariable=self.intervalo_geracao, width=10, format="%.1f")
         spin_int.pack(side=tk.RIGHT)
         
         ttk.Button(frame_algoritmos, text="Executar AG para PCV", 
@@ -709,35 +710,81 @@ Exemplo:
     
     def executar_algoritmo_genetico(self):
         """Executa o Algoritmo Genético para resolver o PCV"""
-        nome_cidade_inicial = self.cidade_inicial_ag.get()
-        
-        # Encontrar ID da cidade
-        cidade_para_id = {self.grafo.obter_nome_vertice(i): i 
-                          for i in self.grafo.obter_todos_vertices()}
-        
-        id_inicial = cidade_para_id[nome_cidade_inicial]
-        
-        # Obter parâmetros
-        tamanho_pop = self.tamanho_populacao.get()
-        taxa_cruz = self.taxa_cruzamento.get()
-        taxa_mut = self.taxa_mutacao.get()
-        num_ger = self.num_geracoes.get()
-        intervalo_ger = self.intervalo_geracao.get()
-        
-        # Criar instância do AG
-        ag = AlgoritmoGeneticoPCV(
-            grafo=self.grafo,
-            cidade_inicial=id_inicial,
-            tamanho_populacao=tamanho_pop,
-            taxa_cruzamento=taxa_cruz,
-            taxa_mutacao=taxa_mut,
-            ponto1_cruzamento=2,
-            ponto2_cruzamento=5,
-            intervalo_geracao=intervalo_ger
-        )
-        
-        # Mostrar janela de visualização
-        self.mostrar_evolucao_ag(ag, num_ger, nome_cidade_inicial)
+        try:
+            # Obter parâmetros
+            nome_cidade_inicial = self.cidade_inicial_ag.get()
+            tamanho_pop = self.tamanho_populacao.get()
+            taxa_cruz = self.taxa_cruzamento.get()
+            taxa_mut = self.taxa_mutacao.get()
+            num_ger = self.num_geracoes.get()
+            intervalo_ger = self.intervalo_geracao.get()
+            
+            # ============================================
+            # VALIDAÇÕES DOS PARÂMETROS
+            # ============================================
+            erros = []
+            
+            # 1. Validar tamanho da população (mínimo 100)
+            if tamanho_pop < 100:
+                erros.append("• População deve ser no mínimo 100 indivíduos")
+            
+            # 2. Validar taxa de cruzamento (60% - 80%)
+            if taxa_cruz < 0.6 or taxa_cruz > 0.8:
+                erros.append("• Taxa de Cruzamento deve estar entre 0.6 (60%) e 0.8 (80%)")
+            
+            # 3. Validar taxa de mutação (0.5% - 1%)
+            if taxa_mut < 0.005 or taxa_mut > 0.01:
+                erros.append("• Taxa de Mutação deve estar entre 0.005 (0.5%) e 0.01 (1%)")
+            
+            # 4. Validar número de gerações (mínimo 20)
+            if num_ger < 20:
+                erros.append("• Número de Gerações deve ser no mínimo 20")
+            
+            # 5. Validar intervalo de geração (0.1 - 1.0)
+            if intervalo_ger < 0.1 or intervalo_ger > 1.0:
+                erros.append("• Intervalo de Geração deve estar entre 0.1 (10%) e 1.0 (100%)")
+            
+            # Se houver erros, mostrar e não executar
+            if erros:
+                mensagem_erro = "Parâmetros inválidos:\n\n" + "\n".join(erros)
+                mensagem_erro += "\n\n" + "="*50 + "\n"
+                mensagem_erro += "Valores aceitos:\n"
+                mensagem_erro += "• População: ≥ 100\n"
+                mensagem_erro += "• Taxa Cruzamento: 0.6 a 0.8 (60% a 80%)\n"
+                mensagem_erro += "• Taxa Mutação: 0.005 a 0.01 (0.5% a 1%)\n"
+                mensagem_erro += "• Gerações: ≥ 20\n"
+                mensagem_erro += "• Intervalo Geração: 0.1 a 1.0 (10% a 100%)\n"
+                
+                messagebox.showerror("Parâmetros Inválidos", mensagem_erro)
+                return
+            
+            # Encontrar ID da cidade
+            cidade_para_id = {self.grafo.obter_nome_vertice(i): i 
+                              for i in self.grafo.obter_todos_vertices()}
+            
+            id_inicial = cidade_para_id[nome_cidade_inicial]
+            
+            # Criar instância do AG
+            ag = AlgoritmoGeneticoPCV(
+                grafo=self.grafo,
+                cidade_inicial=id_inicial,
+                tamanho_populacao=tamanho_pop,
+                taxa_cruzamento=taxa_cruz,
+                taxa_mutacao=taxa_mut,
+                ponto1_cruzamento=2,
+                ponto2_cruzamento=5,
+                intervalo_geracao=intervalo_ger
+            )
+            
+            # Mostrar janela de visualização
+            self.mostrar_evolucao_ag(ag, num_ger, nome_cidade_inicial)
+            
+        except ValueError as e:
+            messagebox.showerror("Erro de Validação", 
+                             f"Erro ao validar parâmetros:\n\n{str(e)}\n\n" +
+                             "Verifique se todos os campos estão preenchidos corretamente.")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao executar Algoritmo Genético:\n\n{str(e)}")
     
     def mostrar_evolucao_ag(self, ag: AlgoritmoGeneticoPCV, max_geracoes: int, cidade_inicial: str):
         """Mostra a evolução do AG em uma janela interativa"""

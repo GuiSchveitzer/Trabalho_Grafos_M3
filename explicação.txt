@@ -1,5 +1,8 @@
 cruzamento_pmx
 # EXTRAIR SEGMENTOS
+    # COPIAR PAIS
+    filho1 = [N, C, L, K, E, H, G]
+    filho2 = [G, H, K, L, N, E, C]
     # segmento1 = filho1[2:6] = [L, K, E, H]
     # segmento2 = filho2[2:6] = [K, L, N, E]
     
